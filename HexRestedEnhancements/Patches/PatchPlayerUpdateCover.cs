@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using UnityEngine;
 
 namespace HexRestedEnhancements.Patches
 {
@@ -13,7 +14,7 @@ namespace HexRestedEnhancements.Patches
 
         private static readonly FieldInfo NearFireTimerField = AccessTools.Field(typeof(Player), "m_nearFireTimer");
         private static readonly MethodInfo GetCoverForPointMethod = AccessTools.Method(typeof(Cover), nameof(Cover.GetCoverForPoint));
-        private static readonly MethodInfo CheckWetRemovalMethod = AccessTools.Method(typeof(PatchPlayerUpdateCover), nameof(CheckWetRemoval));
+        private static readonly MethodInfo ApplyShelterEnhancementsMethod = AccessTools.Method(typeof(PatchPlayerUpdateCover), nameof(ApplyShelterEnhancements));
 
         [HarmonyTranspiler]
         internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -37,15 +38,15 @@ namespace HexRestedEnhancements.Patches
             codes.InsertRange(insertIndex, new[]
             {
                 new CodeInstruction(OpCodes.Ldarg_0),
-                new CodeInstruction(OpCodes.Call, CheckWetRemovalMethod)
+                new CodeInstruction(OpCodes.Call, ApplyShelterEnhancementsMethod)
             });
 
             return codes;
         }
 
-        private static void CheckWetRemoval(Player player)
+        private static void ApplyShelterEnhancements(Player player)
         {
-            if (!Plugin.IsRemoveWetDebuffEnabled || player == null || NearFireTimerField == null || !player.InShelter())
+            if (player == null || NearFireTimerField == null || !player.InShelter())
             {
                 return;
             }
@@ -53,6 +54,17 @@ namespace HexRestedEnhancements.Patches
             var nearFireTimer = (float)NearFireTimerField.GetValue(player);
 
             if (nearFireTimer >= NearFireTimeout)
+            {
+                return;
+            }
+
+            RemoveWetDebuff(player);
+            RepairEquippedItems(player);
+        }
+
+        private static void RemoveWetDebuff(Player player)
+        {
+            if (!Plugin.IsRemoveWetDebuffEnabled)
             {
                 return;
             }
@@ -65,6 +77,51 @@ namespace HexRestedEnhancements.Patches
             }
 
             seMan.RemoveStatusEffect(SEMan.s_statusEffectWet);
+        }
+
+        private static void RepairEquippedItems(Player player)
+        {
+            if (!Plugin.IsAutoRepairEnabled)
+            {
+                return;
+            }
+
+            var wornItems = new List<ItemDrop.ItemData>();
+            player.GetInventory().GetWornItems(wornItems);
+
+            var repairedAnyItem = false;
+
+            foreach (var item in wornItems)
+            {
+                if (!item.m_shared.m_useDurability)
+                {
+                    continue;
+                }
+
+                var maxDurability = item.GetMaxDurability();
+
+                if (item.m_durability >= maxDurability)
+                {
+                    continue;
+                }
+
+                item.m_durability = maxDurability;
+                repairedAnyItem = true;
+            }
+
+            if (!repairedAnyItem)
+            {
+                return;
+            }
+
+            player.Message(MessageHud.MessageType.TopLeft, "Equipped items repaired");
+
+            var repairSfx = ZNetScene.instance.GetPrefab("sfx_gui_repairitem_workbench");
+
+            if (repairSfx != null)
+            {
+                Object.Instantiate(repairSfx, player.transform.position, Quaternion.identity);
+            }
         }
     }
 }

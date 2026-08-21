@@ -18,6 +18,7 @@ namespace HexRestedEnhancements
         private ConfigEntry<bool> _isCustomRestedDelayEnabled;
         private ConfigEntry<int> _restedDelayInSeconds;
         private ConfigEntry<bool> _isRapidHealthAndStaminaRegenEnabled;
+        private ConfigEntry<bool> _isAutoRepairEnabled;
 
         internal static ManualLogSource Log;
         internal static Plugin Instance;
@@ -26,6 +27,7 @@ namespace HexRestedEnhancements
         internal static bool IsCustomRestedDelayEnabled => Instance?._isCustomRestedDelayEnabled?.Value ?? false;
         internal static int RestedDelayInSeconds => Instance?._restedDelayInSeconds?.Value ?? 2;
         internal static bool IsRapidHealthAndStaminaRegenEnabled => Instance?._isRapidHealthAndStaminaRegenEnabled?.Value ?? false;
+        internal static bool IsAutoRepairEnabled => Instance?._isAutoRepairEnabled?.Value ?? false;
 
         private void Awake()
         {
@@ -86,6 +88,12 @@ namespace HexRestedEnhancements
                 "EnableRapidHealthAndStaminaRegen",
                 true,
                 "Rapidly restores health and stamina while the player is resting.");
+
+            _isAutoRepairEnabled = Config.Bind(
+                "General",
+                "EnableAutoRepair",
+                true,
+                "Automatically repairs all equipped items when the player is sheltered and near a fire.");
 
             _isCustomRestedDelayEnabled.SettingChanged += OnCustomRestedDelayEnabledChanged;
             _restedDelayInSeconds.SettingChanged += OnRestedDelaySecondsChanged;
