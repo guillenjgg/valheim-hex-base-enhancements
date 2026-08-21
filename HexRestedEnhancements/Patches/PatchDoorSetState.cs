@@ -1,0 +1,25 @@
+﻿using HarmonyLib;
+using UnityEngine;
+
+namespace HexRestedEnhancements.Patches
+{
+    [HarmonyPatch(typeof(Door), nameof(Door.SetState))]
+    internal static class PatchDoorSetState
+    {
+        private const float VanillaAnimationSpeed = 1f;
+        private const float FastOpenAnimationSpeed = 50f;
+
+        [HarmonyPrefix]
+        private static void Prefix(int state, Animator ___m_animator)
+        {
+            if (___m_animator == null)
+            {
+                return;
+            }
+
+            ___m_animator.speed = Plugin.DoorsOpensFaster && state != 0
+                ? FastOpenAnimationSpeed
+                : VanillaAnimationSpeed;
+        }
+    }
+}

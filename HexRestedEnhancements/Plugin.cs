@@ -19,6 +19,7 @@ namespace HexRestedEnhancements
         private ConfigEntry<int> _restedDelayInSeconds;
         private ConfigEntry<bool> _isRapidHealthAndStaminaRegenEnabled;
         private ConfigEntry<bool> _isAutoRepairEnabled;
+        private ConfigEntry<bool> _isDoorOpenFaster;
 
         internal static ManualLogSource Log;
         internal static Plugin Instance;
@@ -28,6 +29,7 @@ namespace HexRestedEnhancements
         internal static int RestedDelayInSeconds => Instance?._restedDelayInSeconds?.Value ?? 2;
         internal static bool IsRapidHealthAndStaminaRegenEnabled => Instance?._isRapidHealthAndStaminaRegenEnabled?.Value ?? false;
         internal static bool IsAutoRepairEnabled => Instance?._isAutoRepairEnabled?.Value ?? false;
+        internal static bool DoorsOpensFaster => Instance?._isDoorOpenFaster?.Value ?? false;
 
         private void Awake()
         {
@@ -94,6 +96,12 @@ namespace HexRestedEnhancements
                 "EnableAutoRepair",
                 true,
                 "Automatically repairs all repairable items in the player's inventory when the player is sheltered and near a fire.");
+
+            _isDoorOpenFaster = Config.Bind(
+                "General",
+                "EnableDoorOpenFaster",
+                true,
+                "Makes doors open faster.");
 
             _isCustomRestedDelayEnabled.SettingChanged += OnCustomRestedDelayEnabledChanged;
             _restedDelayInSeconds.SettingChanged += OnRestedDelaySecondsChanged;
