@@ -17,6 +17,7 @@ namespace HexRestedEnhancements
         private ConfigEntry<bool> _isRemoveWetDebuffEnabled;
         private ConfigEntry<bool> _isCustomRestedDelayEnabled;
         private ConfigEntry<int> _restedDelayInSeconds;
+        private ConfigEntry<bool> _isRapidHealthAndStaminaRegenEnabled;
 
         internal static ManualLogSource Log;
         internal static Plugin Instance;
@@ -24,6 +25,7 @@ namespace HexRestedEnhancements
         internal static bool IsRemoveWetDebuffEnabled => Instance?._isRemoveWetDebuffEnabled?.Value ?? false;
         internal static bool IsCustomRestedDelayEnabled => Instance?._isCustomRestedDelayEnabled?.Value ?? false;
         internal static int RestedDelayInSeconds => Instance?._restedDelayInSeconds?.Value ?? 2;
+        internal static bool IsRapidHealthAndStaminaRegenEnabled => Instance?._isRapidHealthAndStaminaRegenEnabled?.Value ?? false;
 
         private void Awake()
         {
@@ -43,12 +45,12 @@ namespace HexRestedEnhancements
         {
             if (_isCustomRestedDelayEnabled != null)
             {
-                _isCustomRestedDelayEnabled.SettingChanged -= OnCustomRestedDelayChanged;
+                _isCustomRestedDelayEnabled.SettingChanged -= OnCustomRestedDelayEnabledChanged;
             }
 
             if (_restedDelayInSeconds != null)
             {
-                _restedDelayInSeconds.SettingChanged -= OnRestedDelayChanged;
+                _restedDelayInSeconds.SettingChanged -= OnRestedDelaySecondsChanged;
             }
 
             Log.LogInfo($"{PluginName} v{PluginVersion} unloaded.");
@@ -79,18 +81,24 @@ namespace HexRestedEnhancements
                 2,
                 "The number of seconds the player must rest before receiving the Rested status effect. Only used when CustomRestedDelay is enabled.");
 
-            _isCustomRestedDelayEnabled.SettingChanged += OnCustomRestedDelayChanged;
-            _restedDelayInSeconds.SettingChanged += OnRestedDelayChanged;
+            _isRapidHealthAndStaminaRegenEnabled = Config.Bind(
+                "General",
+                "EnableRapidHealthAndStaminaRegen",
+                true,
+                "Rapidly restores health and stamina while the player is resting.");
+
+            _isCustomRestedDelayEnabled.SettingChanged += OnCustomRestedDelayEnabledChanged;
+            _restedDelayInSeconds.SettingChanged += OnRestedDelaySecondsChanged;
         }
 
-        private void OnCustomRestedDelayChanged(object sender, System.EventArgs e)
+        private void OnCustomRestedDelayEnabledChanged(object sender, System.EventArgs e)
         {
-            Patches.PatchSECozySetup.ApplyCurrentDelay();
+            Patches.PatchSECozySetup.ApplyRestedDelay();
         }
 
-        private void OnRestedDelayChanged(object sender, System.EventArgs e)
+        private void OnRestedDelaySecondsChanged(object sender, System.EventArgs e)
         {
-            Patches.PatchSECozySetup.ApplyCurrentDelay();
+            Patches.PatchSECozySetup.ApplyRestedDelay();
         }
     }
 }

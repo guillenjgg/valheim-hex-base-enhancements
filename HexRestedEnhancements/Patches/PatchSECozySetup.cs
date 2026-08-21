@@ -5,7 +5,6 @@ namespace HexRestedEnhancements.Patches
     [HarmonyPatch(typeof(SE_Cozy), nameof(SE_Cozy.Setup))]
     internal static class PatchSECozySetup
     {
-        // Vanilla SE_Cozy.m_delay default in Valheim.
         private const float VanillaRestedDelay = 10f;
 
         private static SE_Cozy _currentCozy;
@@ -19,10 +18,26 @@ namespace HexRestedEnhancements.Patches
             }
 
             _currentCozy = __instance;
-            ApplyCurrentDelay();
+
+            ApplyRestedDelay();
+
+            if (!Plugin.IsRapidHealthAndStaminaRegenEnabled)
+            {
+                return;
+            }
+
+            var player = __instance.m_character as Player;
+
+            if (player == null)
+            {
+                return;
+            }
+
+            player.Heal(player.GetMaxHealth(), false);
+            player.AddStamina(player.GetMaxStamina());
         }
 
-        internal static void ApplyCurrentDelay()
+        internal static void ApplyRestedDelay()
         {
             if (_currentCozy == null)
             {

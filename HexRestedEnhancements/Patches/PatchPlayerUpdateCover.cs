@@ -1,21 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using HarmonyLib;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using HarmonyLib;
 
 namespace HexRestedEnhancements.Patches
 {
     [HarmonyPatch(typeof(Player), nameof(Player.UpdateCover))]
     internal static class PatchPlayerUpdateCover
     {
-        // This value comes directly from Player.UpdateEnvStatusEffects.
         private const float NearFireTimeout = 0.25f;
 
         private static readonly FieldInfo NearFireTimerField = AccessTools.Field(typeof(Player), "m_nearFireTimer");
-
         private static readonly MethodInfo GetCoverForPointMethod = AccessTools.Method(typeof(Cover), nameof(Cover.GetCoverForPoint));
-
         private static readonly MethodInfo CheckWetRemovalMethod = AccessTools.Method(typeof(PatchPlayerUpdateCover), nameof(CheckWetRemoval));
 
         [HarmonyTranspiler]
@@ -32,7 +29,6 @@ namespace HexRestedEnhancements.Patches
             if (matches.Count != 1)
             {
                 Plugin.Log.LogError($"Player.UpdateCover transpiler expected 1 call to Cover.GetCoverForPoint, but found {matches.Count}. Patch not applied.");
-
                 return codes;
             }
 
@@ -49,12 +45,7 @@ namespace HexRestedEnhancements.Patches
 
         private static void CheckWetRemoval(Player player)
         {
-            if (!Plugin.IsRemoveWetDebuffEnabled)
-            {
-                return;
-            }
-
-            if (player == null || NearFireTimerField == null || !player.InShelter())
+            if (!Plugin.IsRemoveWetDebuffEnabled || player == null || NearFireTimerField == null || !player.InShelter())
             {
                 return;
             }
