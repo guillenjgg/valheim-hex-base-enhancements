@@ -4,11 +4,12 @@ using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
 
-namespace HexNowYouRest.Patches
+namespace HexRestedEnhancements.Patches
 {
     [HarmonyPatch(typeof(Player), nameof(Player.UpdateCover))]
     internal static class PatchPlayerUpdateCover
     {
+        // This value comes directly from Player.UpdateEnvStatusEffects.
         private const float NearFireTimeout = 0.25f;
 
         private static readonly FieldInfo NearFireTimerField = AccessTools.Field(typeof(Player), "m_nearFireTimer");
@@ -48,6 +49,11 @@ namespace HexNowYouRest.Patches
 
         private static void CheckWetRemoval(Player player)
         {
+            if (!Plugin.IsRemoveWetDebuffEnabled)
+            {
+                return;
+            }
+
             if (player == null || NearFireTimerField == null || !player.InShelter())
             {
                 return;

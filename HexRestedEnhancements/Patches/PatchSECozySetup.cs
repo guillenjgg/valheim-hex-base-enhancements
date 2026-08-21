@@ -1,23 +1,37 @@
 ﻿using HarmonyLib;
 
-namespace HexNowYouRest.Patches
+namespace HexRestedEnhancements.Patches
 {
     [HarmonyPatch(typeof(SE_Cozy), nameof(SE_Cozy.Setup))]
     internal static class PatchSECozySetup
     {
+        // Vanilla SE_Cozy.m_delay default in Valheim.
+        private const float VanillaRestedDelay = 10f;
+
+        private static SE_Cozy _currentCozy;
+
+        [HarmonyPostfix]
         private static void Postfix(SE_Cozy __instance)
         {
-            if (Plugin.Instance == null || __instance == null)
+            if (__instance == null || __instance.m_statusEffect != "Rested")
             {
                 return;
             }
 
-            if (__instance.m_statusEffect != "Rested")
+            _currentCozy = __instance;
+            ApplyCurrentDelay();
+        }
+
+        internal static void ApplyCurrentDelay()
+        {
+            if (_currentCozy == null)
             {
                 return;
             }
 
-            __instance.m_delay = 2f;
+            _currentCozy.m_delay = Plugin.IsCustomRestedDelayEnabled
+                ? Plugin.RestedDelayInSeconds
+                : VanillaRestedDelay;
         }
     }
 }
