@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
 
-namespace HexRestedEnhancements.Patches
+namespace HexBaseEnhancements.Patches
 {
     [HarmonyPatch(typeof(Player), nameof(Player.UpdateCover))]
     internal static class PatchPlayerUpdateCover

@@ -2,7 +2,7 @@
 using HarmonyLib;
 using UnityEngine;
 
-namespace HexRestedEnhancements.Patches
+namespace HexBaseEnhancements.Patches
 {
     [HarmonyPatch(typeof(Door), nameof(Door.SetState))]
     internal static class PatchDoorSetState

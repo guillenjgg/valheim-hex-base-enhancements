@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace HexRestedEnhancements.Patches
+namespace HexBaseEnhancements.Patches
 {
     [HarmonyPatch(typeof(SE_Cozy), nameof(SE_Cozy.Setup))]
     internal static class PatchSECozySetup
