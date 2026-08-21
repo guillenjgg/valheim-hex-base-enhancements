@@ -20,6 +20,8 @@ namespace HexRestedEnhancements
         private ConfigEntry<bool> _isRapidHealthAndStaminaRegenEnabled;
         private ConfigEntry<bool> _isAutoRepairEnabled;
         private ConfigEntry<bool> _isDoorOpenFaster;
+        private ConfigEntry<bool> _isDoorsAutoClose;
+        private ConfigEntry<int> _doorAutoCloseInSeconds;
 
         internal static ManualLogSource Log;
         internal static Plugin Instance;
@@ -30,6 +32,8 @@ namespace HexRestedEnhancements
         internal static bool IsRapidHealthAndStaminaRegenEnabled => Instance?._isRapidHealthAndStaminaRegenEnabled?.Value ?? false;
         internal static bool IsAutoRepairEnabled => Instance?._isAutoRepairEnabled?.Value ?? false;
         internal static bool DoorsOpensFaster => Instance?._isDoorOpenFaster?.Value ?? false;
+        internal static bool DoorsAutoClose => Instance?._isDoorsAutoClose?.Value ?? false;
+        internal static int DoorAutoCloseInSeconds => Instance?._doorAutoCloseInSeconds?.Value ?? 1;
 
         private void Awake()
         {
@@ -101,7 +105,19 @@ namespace HexRestedEnhancements
                 "General",
                 "EnableDoorOpenFaster",
                 true,
-                "Makes doors open faster.");
+                "Makes doors open really really really fast.");
+
+            _isDoorsAutoClose = Config.Bind(
+                "General",
+                "EnableDoorsAutoClose",
+                true,
+                "Automatically closes doors after a short delay when opened.");
+
+            _doorAutoCloseInSeconds = Config.Bind(
+                "General",
+                "DoorAutoCloseInSeconds",
+                1,
+                "The number of seconds after which doors will automatically close when opened. Only used when EnableDoorsAutoClose is enabled.");
 
             _isCustomRestedDelayEnabled.SettingChanged += OnCustomRestedDelayEnabledChanged;
             _restedDelayInSeconds.SettingChanged += OnRestedDelaySecondsChanged;
