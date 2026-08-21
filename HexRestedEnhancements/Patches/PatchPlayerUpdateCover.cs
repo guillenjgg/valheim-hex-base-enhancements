@@ -59,7 +59,7 @@ namespace HexRestedEnhancements.Patches
             }
 
             RemoveWetDebuff(player);
-            RepairEquippedItems(player);
+            RepairInventory(player);
         }
 
         private static void RemoveWetDebuff(Player player)
@@ -79,19 +79,19 @@ namespace HexRestedEnhancements.Patches
             seMan.RemoveStatusEffect(SEMan.s_statusEffectWet);
         }
 
-        private static void RepairEquippedItems(Player player)
+        private static void RepairInventory(Player player)
         {
             if (!Plugin.IsAutoRepairEnabled)
             {
                 return;
             }
 
-            var wornItems = new List<ItemDrop.ItemData>();
-            player.GetInventory().GetWornItems(wornItems);
+            var inventory = player.GetInventory();
+            var items = inventory.GetAllItems();
 
             var repairedAnyItem = false;
 
-            foreach (var item in wornItems)
+            foreach (var item in items)
             {
                 if (!item.m_shared.m_useDurability)
                 {
@@ -114,7 +114,7 @@ namespace HexRestedEnhancements.Patches
                 return;
             }
 
-            player.Message(MessageHud.MessageType.TopLeft, "Equipped items repaired");
+            player.Message(MessageHud.MessageType.TopLeft, "Inventory items repaired");
 
             var repairSfx = ZNetScene.instance.GetPrefab("sfx_gui_repairitem_workbench");
 

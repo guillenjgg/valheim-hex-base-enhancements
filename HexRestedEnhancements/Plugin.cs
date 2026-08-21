@@ -93,7 +93,7 @@ namespace HexRestedEnhancements
                 "General",
                 "EnableAutoRepair",
                 true,
-                "Automatically repairs all equipped items when the player is sheltered and near a fire.");
+                "Automatically repairs all repairable items in the player's inventory when the player is sheltered and near a fire.");
 
             _isCustomRestedDelayEnabled.SettingChanged += OnCustomRestedDelayEnabledChanged;
             _restedDelayInSeconds.SettingChanged += OnRestedDelaySecondsChanged;
