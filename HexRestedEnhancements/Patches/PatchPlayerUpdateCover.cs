@@ -60,6 +60,7 @@ namespace HexBaseEnhancements.Patches
 
             RemoveWetDebuff(player);
             RepairInventory(player);
+            RestoreHealthAndStamina(player);
         }
 
         private static void RemoveWetDebuff(Player player)
@@ -127,6 +128,17 @@ namespace HexBaseEnhancements.Patches
             {
                 Object.Instantiate(repairSfx, player.transform.position, Quaternion.identity);
             }
+        }
+
+        private static void RestoreHealthAndStamina(Player player)
+        {
+            if (!Plugin.IsRapidHealthAndStaminaRegenEnabled)
+            {
+                return;
+            }
+
+            player.Heal(player.GetMaxHealth(), false);
+            player.AddStamina(player.GetMaxStamina());
         }
     }
 }
