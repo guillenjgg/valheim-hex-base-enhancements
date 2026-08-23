@@ -116,6 +116,11 @@ namespace HexBaseEnhancements.Patches
 
             player.Message(MessageHud.MessageType.TopLeft, "Inventory items repaired");
 
+            if (!Plugin.IsAutoRepairSoundEnabled)
+            {
+                return;
+            }
+
             var repairSfx = ZNetScene.instance.GetPrefab("sfx_gui_repairitem_workbench");
 
             if (repairSfx != null)

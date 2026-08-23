@@ -23,6 +23,7 @@ namespace HexBaseEnhancements
         private ConfigEntry<bool> _isDoorsAutoClose;
         private ConfigEntry<int> _doorAutoCloseInSeconds;
         private ConfigEntry<bool> _isIncreasedComfortRadiusEnabled;
+        private ConfigEntry<bool> _isAutoRepairSoundEnabled;
         private ConfigEntry<int> _comfortRadiusInMeters;
 
         internal static ManualLogSource Log;
@@ -38,6 +39,7 @@ namespace HexBaseEnhancements
         internal static int DoorAutoCloseInSeconds => Instance?._doorAutoCloseInSeconds?.Value ?? 1;
         internal static bool IsIncreasedComfortRadiusEnabled => Instance?._isIncreasedComfortRadiusEnabled?.Value ?? false;
         internal static int ComfortRadiusInMeters => Instance?._comfortRadiusInMeters?.Value ?? 10;
+        internal static bool IsAutoRepairSoundEnabled => Instance?._isAutoRepairSoundEnabled?.Value ?? false;
 
         private void Awake()
         {
@@ -136,6 +138,12 @@ namespace HexBaseEnhancements
                 new ConfigDescription(
                     "The radius in meters used to detect nearby comfort-providing pieces. Only used when EnableIncreasedComfortRadius is enabled.",
                     new AcceptableValueRange<int>(1, 50)));
+
+            _isAutoRepairSoundEnabled = Config.Bind(
+                "General",
+                "EnableAutoRepairSound",
+                true,
+                "Plays a sound when auto-repairing items. Only used when EnableAutoRepair is enabled.");
 
             _isCustomRestedDelayEnabled.SettingChanged += OnCustomRestedDelayEnabledChanged;
             _restedDelayInSeconds.SettingChanged += OnRestedDelaySecondsChanged;
