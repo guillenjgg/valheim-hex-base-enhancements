@@ -3,7 +3,10 @@
 ### v1.1.0
 
 ## Added
-- 
+- Added automatic fireplace refueling
+- Added configurable fireplace detection radius
+- Added automatic fuel collection from the player's inventory and nearby containers
+- Added an optional sound when inventory items are automatically repaired
 
 ### v1.0.0
 
