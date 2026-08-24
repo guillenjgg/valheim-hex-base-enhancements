@@ -7,6 +7,7 @@ using System.Reflection;
 namespace HexBaseEnhancements
 {
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
+    [BepInDependency("hex.infinitefuel", BepInDependency.DependencyFlags.SoftDependency)]
     public class Plugin : BaseUnityPlugin
     {
         private const string PluginGuid = "com.hex.baseenhancements";
@@ -25,6 +26,8 @@ namespace HexBaseEnhancements
         private ConfigEntry<bool> _isIncreasedComfortRadiusEnabled;
         private ConfigEntry<bool> _isAutoRepairSoundEnabled;
         private ConfigEntry<int> _comfortRadiusInMeters;
+        private ConfigEntry<bool> _isAutoFuelFireplacesEnabled;
+        private ConfigEntry<int> _fireplaceDetectionRadiusInMeters;
 
         internal static ManualLogSource Log;
         internal static Plugin Instance;
@@ -40,6 +43,9 @@ namespace HexBaseEnhancements
         internal static bool IsIncreasedComfortRadiusEnabled => Instance?._isIncreasedComfortRadiusEnabled?.Value ?? false;
         internal static int ComfortRadiusInMeters => Instance?._comfortRadiusInMeters?.Value ?? 10;
         internal static bool IsAutoRepairSoundEnabled => Instance?._isAutoRepairSoundEnabled?.Value ?? false;
+        internal static bool IsAutoFuelFireplacesEnabled => Instance?._isAutoFuelFireplacesEnabled?.Value ?? false;
+
+        internal static int FireplaceDetectionRadiusInMeters => Instance?._fireplaceDetectionRadiusInMeters?.Value ?? 20;
 
         private void Awake()
         {
@@ -78,61 +84,61 @@ namespace HexBaseEnhancements
         private void BindConfig()
         {
             _isRemoveWetDebuffEnabled = Config.Bind(
-                "General",
+                "Wet Debuff",
                 "RemoveWetDebuff",
                 true,
                 "Removes the Wet status effect when the player is sheltered and near a fire.");
 
             _isCustomRestedDelayEnabled = Config.Bind(
-                "General",
+                "Resting",
                 "CustomRestedDelay",
                 true,
                 "Enables a custom delay before the player receives the Rested status effect.");
 
             _restedDelayInSeconds = Config.Bind(
-                "General",
+                "Resting",
                 "RestedDelayInSeconds",
                 2,
                 "The number of seconds the player must rest before receiving the Rested status effect. Only used when CustomRestedDelay is enabled.");
 
             _isRapidHealthAndStaminaRegenEnabled = Config.Bind(
-                "General",
+                "Health and Stamina Regen",
                 "EnableRapidHealthAndStaminaRegen",
                 true,
                 "Rapidly restores health and stamina while the player is resting.");
 
             _isAutoRepairEnabled = Config.Bind(
-                "General",
+                "Auto-Repair",
                 "EnableAutoRepair",
                 true,
                 "Automatically repairs all repairable items in the player's inventory when the player is sheltered and near a fire.");
 
             _isDoorOpenFaster = Config.Bind(
-                "General",
+                "Doors",
                 "EnableDoorOpenFaster",
                 true,
                 "Makes doors open really fast.");
 
             _isDoorsAutoClose = Config.Bind(
-                "General",
+                "Doors",
                 "EnableDoorsAutoClose",
                 true,
                 "Automatically closes doors after a short delay when opened.");
 
             _doorAutoCloseInSeconds = Config.Bind(
-                "General",
+                "Doors",
                 "DoorAutoCloseInSeconds",
                 1,
                 "The number of seconds after which doors will automatically close when opened. Only used when EnableDoorsAutoClose is enabled.");
 
             _isIncreasedComfortRadiusEnabled = Config.Bind(
-                "General",
+                "Comfort",
                 "EnableIncreasedComfortRadius",
                 true,
                 "Increases the radius used to detect nearby comfort-providing pieces.");
 
             _comfortRadiusInMeters = Config.Bind(
-                "General",
+                "Comfort",
                 "ComfortRadiusInMeters",
                 20,
                 new ConfigDescription(
@@ -140,10 +146,24 @@ namespace HexBaseEnhancements
                     new AcceptableValueRange<int>(1, 50)));
 
             _isAutoRepairSoundEnabled = Config.Bind(
-                "General",
+                "Auto-Repair",
                 "EnableAutoRepairSound",
                 true,
                 "Plays a sound when auto-repairing items. Only used when EnableAutoRepair is enabled.");
+
+            _isAutoFuelFireplacesEnabled = Config.Bind(
+                "Fireplaces",
+                "EnableAutoFuelFireplaces",
+                true,
+                "Automatically adds fuel to nearby fireplaces when their fuel level is low.");
+
+            _fireplaceDetectionRadiusInMeters = Config.Bind(
+                "Fireplaces",
+                "FireplaceDetectionRadiusInMeters",
+                20,
+                new ConfigDescription(
+                    "The radius in meters used to detect fireplaces for automatic fueling.",
+                    new AcceptableValueRange<int>(5, 100)));
 
             _isCustomRestedDelayEnabled.SettingChanged += OnCustomRestedDelayEnabledChanged;
             _restedDelayInSeconds.SettingChanged += OnRestedDelaySecondsChanged;
