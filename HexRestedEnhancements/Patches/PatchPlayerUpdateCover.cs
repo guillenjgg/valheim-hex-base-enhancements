@@ -1,9 +1,9 @@
-﻿using HarmonyLib;
+﻿// PatchPlayerUpdateCover.cs
+using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using UnityEngine;
 
 namespace HexBaseEnhancements.Patches
 {
@@ -14,7 +14,7 @@ namespace HexBaseEnhancements.Patches
 
         private static readonly FieldInfo NearFireTimerField = AccessTools.Field(typeof(Player), "m_nearFireTimer");
         private static readonly MethodInfo GetCoverForPointMethod = AccessTools.Method(typeof(Cover), nameof(Cover.GetCoverForPoint));
-        private static readonly MethodInfo ApplyShelterEnhancementsMethod = AccessTools.Method(typeof(PatchPlayerUpdateCover), nameof(ApplyShelterEnhancements));
+        private static readonly MethodInfo ApplyBaseEnhancementsMethod = AccessTools.Method(typeof(PatchPlayerUpdateCover), nameof(ApplyBaseEnhancements));
 
         [HarmonyTranspiler]
         internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -38,15 +38,20 @@ namespace HexBaseEnhancements.Patches
             codes.InsertRange(insertIndex, new[]
             {
                 new CodeInstruction(OpCodes.Ldarg_0),
-                new CodeInstruction(OpCodes.Call, ApplyShelterEnhancementsMethod)
+                new CodeInstruction(OpCodes.Call, ApplyBaseEnhancementsMethod)
             });
 
             return codes;
         }
 
-        private static void ApplyShelterEnhancements(Player player)
+        private static void ApplyBaseEnhancements(Player player)
         {
-            if (player == null || NearFireTimerField == null || !player.InShelter())
+            if (player == null)
+            {
+                return;
+            }
+
+            if (NearFireTimerField == null || !player.InShelter())
             {
                 return;
             }
@@ -59,6 +64,7 @@ namespace HexBaseEnhancements.Patches
             }
 
             RemoveWetDebuff(player);
+            RestoreHealthAndStamina(player);
             RepairInventory(player);
         }
 
@@ -77,6 +83,17 @@ namespace HexBaseEnhancements.Patches
             }
 
             seMan.RemoveStatusEffect(SEMan.s_statusEffectWet);
+        }
+
+        private static void RestoreHealthAndStamina(Player player)
+        {
+            if (!Plugin.IsRapidHealthAndStaminaRegenEnabled)
+            {
+                return;
+            }
+
+            player.Heal(player.GetMaxHealth(), false);
+            player.AddStamina(player.GetMaxStamina());
         }
 
         private static void RepairInventory(Player player)
@@ -116,11 +133,16 @@ namespace HexBaseEnhancements.Patches
 
             player.Message(MessageHud.MessageType.TopLeft, "Inventory items repaired");
 
+            if (!Plugin.IsAutoRepairSoundEnabled)
+            {
+                return;
+            }
+
             var repairSfx = ZNetScene.instance.GetPrefab("sfx_gui_repairitem_workbench");
 
             if (repairSfx != null)
             {
-                Object.Instantiate(repairSfx, player.transform.position, Quaternion.identity);
+                UnityEngine.Object.Instantiate(repairSfx, player.transform.position, UnityEngine.Quaternion.identity);
             }
         }
     }

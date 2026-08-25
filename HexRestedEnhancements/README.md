@@ -1,6 +1,6 @@
 # HexBaseEnhancements
 
-Adds configurable quality-of-life improvements for your Valheim base, including faster resting, automatic repairs, faster doors, automatic door closing, and an increased comfort radius.
+Adds configurable quality-of-life improvements for your Valheim base, including faster resting, automatic repairs, automatic fireplace refueling, faster doors, automatic door closing, and an increased comfort radius.
 
 ## Screenshots
 
@@ -12,7 +12,10 @@ Adds configurable quality-of-life improvements for your Valheim base, including 
 * Automatically removes the Wet status effect when sheltered and near a fire
 * Rapidly restores health and stamina while resting
 * Automatically repairs damaged inventory items when sheltered and near a fire
-* Displays a notification and plays the vanilla repair sound when items are repaired
+* Displays a notification and optionally plays the vanilla repair sound when items are repaired
+* Automatically refuels nearby fireplaces when they are almost empty
+* Uses fuel from the player's inventory and nearby containers
+* Configurable fireplace detection radius from **5 to 100 meters**
 * Greatly increases door opening speed
 * Automatically closes opened doors after a configurable delay
 * Configurable comfort detection radius from **1 to 50 meters**
@@ -43,7 +46,34 @@ When enabled, damaged repairable items in the player's inventory are automatical
 When one or more items are repaired:
 
 * A notification is displayed
-* The vanilla repair sound is played
+* The vanilla repair sound can optionally be played
+
+## Automatic Fireplace Refueling
+
+When enabled, nearby fireplaces are automatically refueled when their fuel level becomes almost empty.
+
+Fuel can be pulled from:
+
+* The player's inventory
+* Nearby containers
+
+The default fireplace detection radius is:
+
+`20 meters`
+
+The detection radius can be configured between:
+
+`5 - 100 meters`
+
+**Only fireplaces within the configured detection radius of the player will be automatically refueled.**
+
+Nearby fuel containers are also discovered using this radius. This means a fireplace may be within range, but if the container holding its required fuel is outside the configured detection radius, that fuel will not be available for automatic refueling.
+
+For larger bases, increase the detection radius or distribute fuel containers throughout the base so the required resources remain within range.
+
+Resources are only consumed when a fireplace is almost empty and needs to be refueled. Fireplaces that already have sufficient fuel are left unchanged.
+
+Fireplaces configured with infinite fuel are ignored.
 
 ## Door Improvements
 
@@ -61,6 +91,10 @@ HexBaseEnhancements allows this radius to be configured between:
 
 `1 - 50 meters`
 
+The default custom comfort radius is:
+
+`20 meters`
+
 Disabling the increased comfort radius restores the vanilla **10 meter** radius.
 
 ## Configuration
@@ -69,18 +103,39 @@ Configuration options are available in:
 
 `BepInEx/config/com.hex.baseenhancements.cfg`
 
-Current configuration options include:
+### Wet Debuff
 
 * **RemoveWetDebuff** — Automatically remove the Wet status effect when sheltered and near a fire
+
+### Resting
+
 * **CustomRestedDelay** — Enable or disable the custom Rested status effect delay
 * **RestedDelayInSeconds** — Number of seconds before receiving the Rested status effect
+
+### Health and Stamina Regen
+
 * **EnableRapidHealthAndStaminaRegen** — Enable rapid health and stamina recovery while resting
+
+### Auto-Repair
+
 * **EnableAutoRepair** — Automatically repair damaged inventory items when sheltered and near a fire
-* **EnableDoorsOpenFaster** — Enable faster door opening
+* **EnableAutoRepairSound** — Play the vanilla repair sound when items are automatically repaired
+
+### Fireplaces
+
+* **EnableAutoFuelFireplaces** — Automatically refuel nearby fireplaces when their fuel level is low
+* **FireplaceDetectionRadiusInMeters** — Detection radius for automatic fireplace refueling and nearby fuel containers (**5–100 meters**, default **20**)
+
+### Doors
+
+* **EnableDoorOpenFaster** — Enable faster door opening
 * **EnableDoorsAutoClose** — Automatically close opened doors
 * **DoorAutoCloseInSeconds** — Delay before an opened door automatically closes
+
+### Comfort
+
 * **EnableIncreasedComfortRadius** — Enable the custom comfort detection radius
-* **ComfortRadiusInMeters** — Radius in meters used to detect comfort-providing pieces
+* **ComfortRadiusInMeters** — Radius used to detect comfort-providing pieces (**1–50 meters**, default **20**)
 
 ## Multiplayer
 

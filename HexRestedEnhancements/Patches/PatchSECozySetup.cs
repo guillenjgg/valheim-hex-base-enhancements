@@ -20,7 +20,6 @@ namespace HexBaseEnhancements.Patches
             _currentCozy = __instance;
 
             ApplyRestedDelay();
-            RestoreHealthAndStamina(__instance);
         }
 
         internal static void ApplyRestedDelay()
@@ -33,24 +32,6 @@ namespace HexBaseEnhancements.Patches
             _currentCozy.m_delay = Plugin.IsCustomRestedDelayEnabled
                 ? Plugin.RestedDelayInSeconds
                 : VanillaRestedDelay;
-        }
-
-        private static void RestoreHealthAndStamina(SE_Cozy cozy)
-        {
-            if (!Plugin.IsRapidHealthAndStaminaRegenEnabled)
-            {
-                return;
-            }
-
-            var player = cozy.m_character as Player;
-
-            if (player == null)
-            {
-                return;
-            }
-
-            player.Heal(player.GetMaxHealth(), false);
-            player.AddStamina(player.GetMaxStamina());
         }
     }
 }

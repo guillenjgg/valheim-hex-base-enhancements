@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HexNowYouRest</RootNamespace>
-    <AssemblyName>HexNowYouRest</AssemblyName>
+    <AssemblyName>HexBaseEnhancements</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -67,9 +67,16 @@
       <HintPath>..\..\..\valheim_mod_libraries\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>..\..\..\valheim_mod_libraries\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Features\AutoFuelFireplaces.cs" />
     <Compile Include="Patches\PatchDoorSetState.cs" />
+    <Compile Include="Patches\PatchFireplace.cs" />
+    <Compile Include="Patches\PatchPlayerUpdateBaseValue.cs" />
     <Compile Include="Patches\PatchPlayerUpdateCover.cs" />
     <Compile Include="Patches\PatchSECozySetup.cs" />
     <Compile Include="Patches\PatchSERestedGetNearbyComfortPieces.cs" />
