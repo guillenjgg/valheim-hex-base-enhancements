@@ -12,7 +12,7 @@ namespace HexBaseEnhancements
     {
         private const string PluginGuid = "com.hex.baseenhancements";
         private const string PluginName = "HexBaseEnhancements";
-        private const string PluginVersion = "1.1.2";
+        private const string PluginVersion = "1.1.3";
 
         private Harmony _harmonyInstance;
         private ConfigEntry<bool> _isRemoveWetDebuffEnabled;
