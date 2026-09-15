@@ -31,6 +31,11 @@ namespace HexBaseEnhancements.Patches
                 return;
             }
 
+            if (Player.m_localPlayer != null && Player.m_localPlayer.InInterior())
+            {
+                return;
+            }
+
             if (state == 0 || !___m_nview.IsValid() || !___m_nview.IsOwner())
             {
                 return;
@@ -42,6 +47,11 @@ namespace HexBaseEnhancements.Patches
         private static IEnumerator AutoCloseDoor(ZNetView nview)
         {
             yield return new WaitForSeconds(Plugin.DoorAutoCloseInSeconds);
+
+            if (Player.m_localPlayer != null && Player.m_localPlayer.InInterior())
+            {
+                yield break;
+            }
 
             if (nview == null || !nview.IsValid() || !nview.IsOwner())
             {

@@ -1,5 +1,10 @@
 ## Changelog
 
+### v1.1.3
+
+### Fixed
+- Automatic door closing is now disabled while inside dungeons and caves
+
 ### v1.1.2
 
 ### Added
@@ -12,7 +17,7 @@
 
 ### v1.1.0
 
-## Added
+### Added
 - Added automatic fireplace refueling
 - Added configurable fireplace detection radius
 - Added automatic fuel collection from the player's inventory and nearby containers
